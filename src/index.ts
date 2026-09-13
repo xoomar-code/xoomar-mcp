@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const BASE_URL = (process.env.XOOMAR_BASE_URL || "https://xoomar.com").replace(/\/$/, "");
 const API_KEY = process.env.XOOMAR_API_KEY;
 const MAX_ROWS = Number(process.env.XOOMAR_MAX_ROWS || 200);
@@ -205,7 +205,6 @@ async function main() {
   await server.connect(transport);
 }
 
-const invokedDirectly = process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop() || " ");
-if (invokedDirectly || process.env.XOOMAR_MCP_RUN === "1") {
-  main().catch((e) => { console.error(e); process.exit(1); });
-}
+// The package is a bin: the module is always the entry point (npx resolves it through a
+// .bin symlink, so comparing paths with import.meta.url is unreliable).
+main().catch((e) => { console.error(e); process.exit(1); });

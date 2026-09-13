@@ -5,7 +5,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 
 // Spawns the built server over stdio and talks to it like Claude Desktop would.
 async function connect() {
-  const transport = new StdioClientTransport({ command: "node", args: ["dist/index.js"], env: { ...process.env, XOOMAR_MCP_RUN: "1" } });
+  const transport = new StdioClientTransport({ command: "node", args: ["dist/index.js"], env: { ...process.env } });
   const client = new Client({ name: "test", version: "0.0.0" });
   await client.connect(transport);
   return client;
