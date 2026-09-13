@@ -1,6 +1,6 @@
 {
   "name": "xoomar-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for the XOOMAR free market data API: short interest, insider trades, 13F holdings, company financials, COT positioning, funding rates, Fed liquidity and more, as tools for AI agents.",
   "type": "module",
   "bin": {
@@ -35,7 +35,7 @@
     "xoomar"
   ],
   "author": "XOOMAR <info@xoomar.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "homepage": "https://xoomar.com/markets/api",
   "repository": {
     "type": "git",

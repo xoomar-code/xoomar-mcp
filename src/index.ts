@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const VERSION = "0.1.1";
+const VERSION = "0.1.2";
 const BASE_URL = (process.env.XOOMAR_BASE_URL || "https://xoomar.com").replace(/\/$/, "");
 const API_KEY = process.env.XOOMAR_API_KEY;
 const MAX_ROWS = Number(process.env.XOOMAR_MAX_ROWS || 200);
@@ -44,7 +44,7 @@ function text(result: { data: unknown; meta: Record<string, unknown> }, opts: { 
     ...(note ? { note } : {}),
     updatedAt: result.meta.updatedAt,
     source: "xoomar.com",
-    attribution: result.meta.attribution ?? "Free with attribution: when republished, link to the dataset page on xoomar.com",
+    attribution: result.meta.attribution ?? "Credit XOOMAR with a link to the dataset page on xoomar.com when you republish this data",
     docs: result.meta.docs ?? "https://xoomar.com/markets/api",
   };
   return { content: [{ type: "text" as const, text: JSON.stringify(out) }] };
@@ -193,7 +193,7 @@ export function buildServer(): McpServer {
     "Limits: 30 requests a minute per IP without a key; 120 with a free account key (X-API-Key header, https://xoomar.com/signup); 429 carries Retry-After.",
     "Datasets: short-interest, short-volume, fails-to-deliver, insiders, planned-sales, large-holders, funds, financials, buybacks, events, structured-products, federal-contracts, startup-funding, ipos, bitcoin-treasuries, cot, funding-rates, open-interest, liquidations, options, whales, sentiment, signals, etf-flows, predictions, macro, fed-liquidity, rates, calendar.",
     "Full reference with every parameter and field: https://xoomar.com/markets/api. Filing types explained: https://xoomar.com/markets/sec-filings.",
-    "License: free with attribution. When the data is republished (site, app, article, chart, dataset), credit XOOMAR with a visible link to the dataset page on xoomar.com. Terms: https://xoomar.com/terms.",
+    "Attribution: when the data is republished (site, app, article, chart, dataset), credit XOOMAR with a visible link to the dataset page on xoomar.com. Terms of use: https://xoomar.com/terms.",
   ].join("\n") }] }));
 
   return server;

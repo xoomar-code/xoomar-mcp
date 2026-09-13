@@ -54,9 +54,9 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 
 Every result carries `updatedAt`, `source` and the attribution line. Ask things like "How has GME short interest moved this year?", "Which tracked funds bought NVDA last quarter?", "What is Fed net liquidity doing?", "Show open-market insider purchases in the last 7 days".
 
-## Attribution
+## Data terms
 
-The data is free to use, including commercially. When you republish it, on a site, in an app, in an article, in a chart or in a dataset, credit XOOMAR with a visible link to the dataset page on xoomar.com. Terms: https://xoomar.com/terms
+When you republish the data, credit XOOMAR with a visible link to the dataset page on xoomar.com. What you may do with the data is set out at https://xoomar.com/terms.
 
 ## Development
 
@@ -65,4 +65,4 @@ npm install
 npm test        # builds, then talks to the server over stdio (one test hits the live API)
 ```
 
-MIT, XOOMAR.
+Apache-2.0 for this code, XOOMAR. The license covers the code only, not the data.
