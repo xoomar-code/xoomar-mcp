@@ -3,17 +3,53 @@
   "version": "0.1.0",
   "description": "MCP server for the XOOMAR free market data API: short interest, insider trades, 13F holdings, company financials, COT positioning, funding rates, Fed liquidity and more, as tools for AI agents.",
   "type": "module",
-  "bin": { "xoomar-mcp": "./dist/index.js" },
+  "bin": {
+    "xoomar-mcp": "dist/index.js"
+  },
   "main": "./dist/index.js",
-  "files": ["dist", "README.md", "LICENSE"],
-  "engines": { "node": ">=18" },
-  "scripts": { "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('dist/index.js', 0o755)\"", "pretest": "npm run build", "test": "node --test test/*.test.mjs", "prepublishOnly": "npm run build" },
-  "keywords": ["mcp", "model context protocol", "market data", "sec", "finra", "cot", "short interest", "insider trading", "13f", "fed liquidity", "xoomar"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('fs').chmodSync('dist/index.js', 0o755)\"",
+    "pretest": "npm run build",
+    "test": "node --test test/*.test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model context protocol",
+    "market data",
+    "sec",
+    "finra",
+    "cot",
+    "short interest",
+    "insider trading",
+    "13f",
+    "fed liquidity",
+    "xoomar"
+  ],
   "author": "XOOMAR <info@xoomar.com>",
   "license": "MIT",
   "homepage": "https://xoomar.com/markets/api",
-  "repository": { "type": "git", "url": "git+https://github.com/xoomar-dev-cloud/xoomar-mcp.git" },
-  "bugs": { "url": "https://github.com/xoomar-dev-cloud/xoomar-mcp/issues" },
-  "dependencies": { "@modelcontextprotocol/sdk": "^1.30.0", "zod": "^3.25.0" },
-  "devDependencies": { "typescript": "^5.6.0", "@types/node": "^22.0.0" }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xoomar-dev-cloud/xoomar-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xoomar-dev-cloud/xoomar-mcp/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
 }
