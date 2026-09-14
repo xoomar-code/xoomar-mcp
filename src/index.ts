@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const VERSION = "0.1.2";
+const VERSION = "0.1.3";
 const BASE_URL = (process.env.XOOMAR_BASE_URL || "https://xoomar.com").replace(/\/$/, "");
 const API_KEY = process.env.XOOMAR_API_KEY;
 const MAX_ROWS = Number(process.env.XOOMAR_MAX_ROWS || 200);
@@ -63,21 +63,21 @@ export function buildServer(): McpServer {
 
   server.registerTool("short_volume", {
     title: "FINRA daily short sale volume",
-    description: "Daily short sale volume and total volume per symbol from FINRA's Reg SHO files, with the short share of volume. History for a symbol (oldest first) or the latest day's largest short volumes.",
-    inputSchema: { symbol: symbolArg.optional(), days: z.number().int().min(1).max(400).optional().describe("Days of history for a symbol (default 60)") },
-  }, async ({ symbol, days }) => text(await callApi("short-volume", { symbol, days })));
+    description: "Daily short sale volume and total volume per symbol from FINRA's Reg SHO files since August 2021, with the short share of volume. History for a symbol (oldest first; from, to and limit select the window, up to 5,000 days) or the latest day's largest short volumes.",
+    inputSchema: { symbol: symbolArg.optional(), days: z.number().int().min(1).max(5000).optional().describe("Newest days of history for a symbol (default 60)"), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD") },
+  }, async ({ symbol, days, from, to }) => text(await callApi("short-volume", { symbol, days, from, to })));
 
   server.registerTool("fails_to_deliver", {
     title: "SEC fails to deliver",
-    description: "SEC fails-to-deliver quantity and price by settlement date for a symbol, or the latest settlement's largest fails by value.",
-    inputSchema: { symbol: symbolArg.optional() },
-  }, async ({ symbol }) => text(await callApi("fails-to-deliver", { symbol }), { limit: 120 }));
+    description: "SEC fails-to-deliver quantity and price by settlement date for a symbol since January 2010 (from, to and limit select the window, up to 5,000 dates), or the latest settlement's largest fails by value.",
+    inputSchema: { symbol: symbolArg.optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), limit: z.number().int().min(1).max(5000).optional().describe("Newest dates in the window (default 400)") },
+  }, async ({ symbol, from, to, limit }) => text(await callApi("fails-to-deliver", { symbol, from, to, limit }), { limit: 120 }));
 
   server.registerTool("insider_trades", {
     title: "SEC Form 4 insider trades",
-    description: "Insider transactions from SEC Form 4: insider name and title, transaction code, shares, price, value, date. History for a ticker or the latest trades across companies (type P for open-market purchases, S for sales).",
-    inputSchema: { ticker: symbolArg.optional(), type: z.enum(["P", "S"]).optional().describe("P purchases, S sales (latest view only)"), window: z.enum(["7d", "30d", "90d"]).optional() },
-  }, async ({ ticker, type, window }) => text(ticker ? await callApi(`insiders/${ticker.toLowerCase()}`) : await callApi("insiders", { type, window }), { limit: 100 }));
+    description: "Insider transactions from SEC Form 4: insider name and title, transaction code, shares, price, value, date. History for a ticker from filings since 2020 (from, to and limit select the window, up to 2,000 rows) or the latest trades across companies (type P for open-market purchases, S for sales).",
+    inputSchema: { ticker: symbolArg.optional(), type: z.enum(["P", "S"]).optional().describe("P purchases, S sales (latest view only)"), window: z.enum(["7d", "30d", "90d"]).optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), to: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), limit: z.number().int().min(1).max(2000).optional().describe("Newest rows in the window (ticker history only, default 200)") },
+  }, async ({ ticker, type, window, from, to, limit }) => text(ticker ? await callApi(`insiders/${ticker.toLowerCase()}`, { from, to, limit }) : await callApi("insiders", { type, window }), { limit: 100 }));
 
   server.registerTool("planned_insider_sales", {
     title: "SEC Form 144 notices of proposed sale",
@@ -123,7 +123,7 @@ export function buildServer(): McpServer {
 
   server.registerTool("funding_rates", {
     title: "Perpetual futures funding rates",
-    description: "Current perpetual funding rates on Binance, Bybit and OKX for tracked crypto symbols, or one symbol's history by slug (e.g. btc, eth, sol).",
+    description: "Current perpetual funding rates on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX for tracked crypto symbols (hourly venues shown as the 8-hour equivalent), or one symbol's history by slug (e.g. btc, eth, sol).",
     inputSchema: { slug: z.string().max(20).optional() },
   }, async ({ slug }) => text(slug ? await callApi(`funding-rates/${slug}`) : await callApi("funding-rates"), { limit: 200 }));
 
@@ -147,9 +147,9 @@ export function buildServer(): McpServer {
 
   server.registerTool("economic_calendar", {
     title: "US economic calendar",
-    description: "Scheduled US releases (CPI, NFP, FOMC, GDP and more) with consensus and actuals once published.",
-    inputSchema: { from: z.string().max(10).optional(), to: z.string().max(10).optional(), importance: z.enum(["high", "medium", "low"]).optional() },
-  }, async ({ from, to, importance }) => text(await callApi("calendar", { from, to, importance })));
+    description: "Scheduled US releases from the agencies' own calendars (CPI, PPI, payrolls, weekly jobless claims, PCE, GDP, retail sales, housing, durable goods, industrial production, trade, FOMC decisions and minutes, Beige Book), with the actual and previous print filled after release and a unit field. No consensus figures. Default window: last 7 days to next 30.",
+    inputSchema: { from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), importance: z.enum(["high", "med", "medium", "low"]).optional() },
+  }, async ({ from, to, importance }) => text(await callApi("calendar", { from, to, importance: importance === "medium" ? "med" : importance })));
 
   server.registerTool("private_placements", {
     title: "SEC Form D private placements",

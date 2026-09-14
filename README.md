@@ -30,8 +30,8 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 | Tool | What it returns |
 |---|---|
 | `short_interest` | FINRA short interest with days to cover, per settlement date |
-| `short_volume` | FINRA daily short sale volume and the short share of volume |
-| `fails_to_deliver` | SEC fails to deliver by settlement date |
+| `short_volume` | FINRA daily short sale volume and the short share of volume, since 2021 |
+| `fails_to_deliver` | SEC fails to deliver by settlement date, since 2010 |
 | `insider_trades` | SEC Form 4 insider transactions |
 | `planned_insider_sales` | SEC Form 144 notices of proposed sale |
 | `large_holders` | Schedule 13D and 13G holders above 5% |
@@ -40,11 +40,11 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 | `company_financials` | Quarterly and annual figures and the balance sheet from XBRL |
 | `corporate_events` | 8-K material events by item |
 | `cot_positioning` | CFTC Commitments of Traders, latest or one market's history |
-| `funding_rates` | Perpetual funding on Binance, Bybit and OKX |
+| `funding_rates` | Perpetual funding on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX |
 | `fed_liquidity` | Net liquidity and its components, or one FRED series |
 | `policy_rates` | Central bank policy rates, 49 economies |
 | `macro_series` | US yield curve, spreads, stablecoin supply |
-| `economic_calendar` | US releases with consensus and actuals |
+| `economic_calendar` | 22 US release types from the agencies' schedules, with actuals after release |
 | `private_placements` | SEC Form D private placements |
 | `ipo_pipeline` | S-1, F-1, 424B4, EFFECT and RW filings |
 | `bitcoin_treasuries` | Bitcoin held by public companies |
