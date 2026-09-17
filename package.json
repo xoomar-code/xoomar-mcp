@@ -1,6 +1,7 @@
 {
   "name": "xoomar-mcp",
-  "version": "0.1.4",
+  "version": "0.1.5",
+  "mcpName": "com.xoomar/xoomar-mcp",
   "description": "MCP server for the XOOMAR free market data API: short interest, insider trades, 13F holdings, company financials, COT positioning, funding rates, Fed liquidity and more, as tools for AI agents.",
   "type": "module",
   "bin": {
@@ -10,7 +11,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "server.json"
   ],
   "engines": {
     "node": ">=18"

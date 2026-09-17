@@ -57,6 +57,10 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 
 Every result carries `updatedAt`, `source` and the attribution line. Ask things like "How has GME short interest moved this year?", "Which tracked funds bought NVDA last quarter?", "What is Fed net liquidity doing?", "Show open-market insider purchases in the last 7 days".
 
+## Where it is listed
+
+Official MCP registry as `com.xoomar/xoomar-mcp` (`server.json` in this repository is what gets published), npm as `xoomar-mcp`, and on Glama. The `mcpName` field in `package.json` is the registry's proof that the npm package and the registry entry belong together.
+
 ## Data terms
 
 When you republish the data, credit XOOMAR with a visible link to the dataset page on xoomar.com. What you may do with the data is set out at https://xoomar.com/terms.
