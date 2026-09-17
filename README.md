@@ -1,6 +1,6 @@
 # xoomar-mcp
 
-An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMAR](https://xoomar.com/markets) free market data API as tools: 21 tools over 29 datasets built from primary sources (SEC EDGAR and XBRL, FINRA, CFTC, the Federal Reserve, USAspending, exchange APIs). No key needed to start.
+An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMAR](https://xoomar.com/markets) free market data API as tools: 25 tools over 31 datasets built from primary sources (SEC EDGAR and XBRL, FINRA, CFTC, the Federal Reserve, USAspending, exchange APIs). No key needed to start.
 
 ## Use it
 
@@ -33,6 +33,8 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 | `short_volume` | FINRA daily short sale volume and the short share of volume, since 2021 |
 | `fails_to_deliver` | SEC fails to deliver by settlement date, since 2010 |
 | `insider_trades` | SEC Form 4 insider transactions |
+| `insider_clusters` | Companies where several insiders bought on the open market in a window |
+| `threshold_list` | Reg SHO threshold securities lists (Nasdaq and Cboe, since 2022) |
 | `planned_insider_sales` | SEC Form 144 notices of proposed sale |
 | `large_holders` | Schedule 13D and 13G holders above 5% |
 | `fund_holders` | Which tracked 13F managers hold a ticker |
@@ -44,6 +46,7 @@ Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.c
 | `fed_liquidity` | Net liquidity and its components, or one FRED series |
 | `policy_rates` | Central bank policy rates, 49 economies |
 | `macro_series` | US yield curve, spreads, stablecoin supply |
+| `treasury_auctions` | Treasury auction results and calendar since 2010 |
 | `economic_calendar` | 22 US release types from the agencies' schedules, with actuals after release |
 | `private_placements` | SEC Form D private placements |
 | `ipo_pipeline` | S-1, F-1, 424B4, EFFECT and RW filings |

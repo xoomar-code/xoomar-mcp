@@ -11,7 +11,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const VERSION = "0.1.3";
+const VERSION = "0.1.4";
 const BASE_URL = (process.env.XOOMAR_BASE_URL || "https://xoomar.com").replace(/\/$/, "");
 const API_KEY = process.env.XOOMAR_API_KEY;
 const MAX_ROWS = Number(process.env.XOOMAR_MAX_ROWS || 200);
@@ -79,6 +79,18 @@ export function buildServer(): McpServer {
     inputSchema: { ticker: symbolArg.optional(), type: z.enum(["P", "S"]).optional().describe("P purchases, S sales (latest view only)"), window: z.enum(["7d", "30d", "90d"]).optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), to: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), limit: z.number().int().min(1).max(2000).optional().describe("Newest rows in the window (ticker history only, default 200)") },
   }, async ({ ticker, type, window, from, to, limit }) => text(ticker ? await callApi(`insiders/${ticker.toLowerCase()}`, { from, to, limit }) : await callApi("insiders", { type, window }), { limit: 100 }));
 
+  server.registerTool("insider_clusters", {
+    title: "Insider cluster buying",
+    description: "Companies where several different insiders bought their own stock on the open market within a window (Form 4 transaction code P only): distinct buyers with titles, trades, combined value, first and latest trade dates. Default: three or more insiders in 30 days, sorted by number of insiders then value. Use ticker to check one company.",
+    inputSchema: { days: z.number().int().min(1).max(365).optional().describe("Window in days (default 30)"), minInsiders: z.number().int().min(2).max(20).optional().describe("Distinct buyers required (default 3)"), minUsd: z.number().min(0).optional().describe("Combined purchases at or above this, USD"), ticker: symbolArg.optional(), limit: z.number().int().min(1).max(500).optional() },
+  }, async ({ days, minInsiders, minUsd, ticker, limit }) => text(await callApi("insiders/clusters", { days, minInsiders, minUsd, ticker, limit }), { limit: limit ?? 50 }));
+
+  server.registerTool("threshold_list", {
+    title: "Regulation SHO threshold securities",
+    description: "Reg SHO threshold lists from the Nasdaq and Cboe daily files since 2022: securities whose fails to deliver stayed above the threshold for five settlement days. One date (default the newest), one symbol's days on the list, or one listing market.",
+    inputSchema: { date: z.string().max(10).optional().describe("YYYY-MM-DD"), symbol: symbolArg.optional(), market: z.enum(["nasdaq", "cboe", "nyse"]).optional(), limit: z.number().int().min(1).max(5000).optional() },
+  }, async ({ date, symbol, market, limit }) => text(await callApi("threshold-list", { date, symbol, market, limit }), { limit: limit ?? 200 }));
+
   server.registerTool("planned_insider_sales", {
     title: "SEC Form 144 notices of proposed sale",
     description: "Form 144 notices: an affiliate's planned sale of restricted or control stock (seller, shares, approximate market value, planned date), filed before the trade.",
@@ -144,6 +156,12 @@ export function buildServer(): McpServer {
     description: "US Treasury yield curve points, curve spreads and stablecoin supply as daily series. Filter by series name and date range.",
     inputSchema: { series: z.string().max(40).optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional() },
   }, async ({ series, from, to }) => text(await callApi("macro", { series, from, to }), { limit: 200 }));
+
+  server.registerTool("treasury_auctions", {
+    title: "US Treasury auctions",
+    description: "Treasury auction results and calendar since 2010 from TreasuryDirect: security type and term, auction and issue dates, offering amount, high yield or discount rate, bid-to-cover, dealer, direct and indirect allotments. Default: coupon auctions (notes, bonds, TIPS, FRNs); upcoming=true lists announced auctions not yet run.",
+    inputSchema: { type: z.enum(["Note", "Bond", "TIPS", "FRN", "Bill", "CMB", "all"]).optional(), term: z.string().max(30).optional().describe("One term, e.g. 10-Year"), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), upcoming: z.boolean().optional(), limit: z.number().int().min(1).max(5000).optional() },
+  }, async ({ type, term, from, to, upcoming, limit }) => text(await callApi("treasury-auctions", { type, term, from, to, upcoming: upcoming ? 1 : undefined, limit }), { limit: limit ?? 100 }));
 
   server.registerTool("economic_calendar", {
     title: "US economic calendar",
