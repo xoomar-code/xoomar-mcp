@@ -1,6 +1,6 @@
 # xoomar-mcp
 
-An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMAR](https://xoomar.com/markets) free market data API as tools: 25 tools over 31 datasets built from primary sources (SEC EDGAR and XBRL, FINRA, CFTC, the Federal Reserve, USAspending, exchange APIs). No key needed to start.
+An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMAR](https://xoomar.com/markets) free market data API as tools: 26 tools over 32 datasets built from primary sources (SEC EDGAR and XBRL, FINRA, CFTC, the Federal Reserve, USAspending, exchange APIs). No key needed to start.
 
 ## Use it
 
@@ -29,7 +29,7 @@ As a library (the hosted endpoint is built this way):
 
 ```ts
 import { buildServer } from "xoomar-mcp";
-const server = buildServer({ apiKey: "xm_live_...", maxRows: 100 }); // an McpServer with the 25 tools; connect any transport
+const server = buildServer({ apiKey: "xm_live_...", maxRows: 100 }); // an McpServer with the 26 tools; connect any transport
 ```
 
 Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key from https://xoomar.com/signup raises the limit from 30 to 120 requests a minute), `XOOMAR_MAX_ROWS` (rows per tool result, default 200).
@@ -49,6 +49,7 @@ Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key fro
 | `fund_holders` | Which tracked 13F managers hold a ticker |
 | `fund_portfolio` | One tracked manager's latest 13F portfolio |
 | `company_financials` | Quarterly and annual figures and the balance sheet from XBRL |
+| `earnings_calendar` | Reported earnings dates from 8-K Item 2.02 filings and the next expected date per company (estimated, with its basis) |
 | `corporate_events` | 8-K material events by item |
 | `cot_positioning` | CFTC Commitments of Traders, latest or one market's history |
 | `funding_rates` | Perpetual funding on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX |

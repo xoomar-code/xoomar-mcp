@@ -1,6 +1,6 @@
 /**
  * The XOOMAR MCP server as a library: `buildServer()` returns an McpServer with the
- * 25 tools, each calling the public JSON API (https://xoomar.com/markets/api) and
+ * 26 tools, each calling the public JSON API (https://xoomar.com/markets/api) and
  * returning the `data` part plus the source and attribution line from the envelope.
  *
  * The npm bin (`xoomar-mcp`) runs it over stdio; the hosted endpoint at
@@ -9,7 +9,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-export const VERSION = "0.1.6";
+export const VERSION = "0.1.7";
 
 export interface ServerOptions {
   /** API origin; the hosted endpoint points this at its own loopback address. */
@@ -143,6 +143,12 @@ export function buildServer(options: ServerOptions = {}): McpServer {
     description: "8-K current reports with their item numbers (2.02 earnings, 5.02 officer changes, 1.01 agreements and so on), for a ticker or the latest across companies.",
     inputSchema: { ticker: symbolArg.optional(), item: z.string().max(8).optional().describe("8-K item number, e.g. 2.02"), days: z.number().int().min(1).max(365).optional() },
   }, async ({ ticker, item, days }) => text(await callApi("events", { ticker, item, days }), { limit: 100 }));
+
+  server.registerTool("earnings_calendar", {
+    title: "Earnings calendar (8-K Item 2.02)",
+    description: "When US companies report results, from their own 8-K filings. With a ticker: every reported date since 2023 and the next expected date (an estimate: last year's date plus 52 weeks, with the basis). Without: the calendar window (default today to 14 days ahead; from and to open any window up to 120 days; status reported or estimated). Dates only, no EPS or consensus.",
+    inputSchema: { ticker: symbolArg.optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), status: z.enum(["reported", "estimated"]).optional(), limit: z.number().int().min(1).max(2000).optional() },
+  }, async ({ ticker, from, to, status, limit }) => text(ticker && !from && !to && !status ? await callApi(`earnings/${ticker.toLowerCase()}`) : await callApi("earnings", { ticker, from, to, status, limit }), { limit: limit ?? 200 }));
 
   server.registerTool("cot_positioning", {
     title: "CFTC Commitments of Traders",

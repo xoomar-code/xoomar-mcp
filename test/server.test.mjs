@@ -18,7 +18,8 @@ test("lists the tools", async () => {
     const names = tools.map((t) => t.name);
     assert.ok(names.includes("short_interest") && names.includes("cot_positioning") && names.includes("api_reference"));
     assert.ok(names.includes("insider_clusters") && names.includes("threshold_list") && names.includes("treasury_auctions"));
-    assert.equal(tools.length, 25);
+    assert.equal(tools.length, 26);
+    assert.ok(names.includes("earnings_calendar"));
     assert.ok(tools.length >= 20);
   } finally { await c.close(); }
 });
