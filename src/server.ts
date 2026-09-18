@@ -9,7 +9,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-export const VERSION = "0.1.7";
+export const VERSION = "0.1.8";
 
 export interface ServerOptions {
   /** API origin; the hosted endpoint points this at its own loopback address. */
@@ -232,7 +232,7 @@ export function buildServer(options: ServerOptions = {}): McpServer {
   }, async () => ({ content: [{ type: "text" as const, text: [
     "XOOMAR free market data API. Base URL https://xoomar.com/api/markets/<dataset>. JSON envelope {data, updatedAt, source, docs, license, attribution}; CSV at /api/markets/<dataset>/csv.",
     "Limits: 30 requests a minute per IP without a key; 120 with a free account key (X-API-Key header, https://xoomar.com/signup); 429 carries Retry-After.",
-    "Datasets: short-interest, short-volume, fails-to-deliver, insiders, planned-sales, large-holders, funds, financials, buybacks, events, structured-products, federal-contracts, startup-funding, ipos, bitcoin-treasuries, cot, funding-rates, open-interest, liquidations, options, whales, sentiment, signals, etf-flows, predictions, macro, fed-liquidity, rates, calendar.",
+    "Datasets: short-interest, short-volume, fails-to-deliver, insiders, planned-sales, large-holders, funds, financials, buybacks, events, structured-products, federal-contracts, startup-funding, ipos, bitcoin-treasuries, cot, funding-rates, open-interest, liquidations, options, whales, sentiment, signals, etf-flows, earnings, macro, fed-liquidity, rates, calendar.",
     "Full reference with every parameter and field: https://xoomar.com/markets/api. Filing types explained: https://xoomar.com/markets/sec-filings.",
     "Attribution: when the data is republished (site, app, article, chart, dataset), credit XOOMAR with a visible link to the dataset page on xoomar.com. Terms of use: https://xoomar.com/terms.",
   ].join("\n") }] }));
