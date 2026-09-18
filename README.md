@@ -4,7 +4,9 @@ An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMA
 
 ## Use it
 
-Claude Desktop (`claude_desktop_config.json`), Claude Code, Cursor, Windsurf and any other MCP client that launches stdio servers:
+**Hosted, nothing to install:** `https://xoomar.com/mcp` (Streamable HTTP). Add it as a remote MCP server or custom connector in Claude.ai, Claude Code (`claude mcp add --transport http xoomar https://xoomar.com/mcp`), ChatGPT, Cursor or any client that connects by URL. Send `Authorization: Bearer <key>` or `X-API-Key` with a free account key for 120 requests a minute; without one the limit is 30 a minute per IP.
+
+**Local, over stdio:** Claude Desktop (`claude_desktop_config.json`), Claude Code, Cursor, Windsurf and any other MCP client that launches stdio servers:
 
 ```json
 {
@@ -23,7 +25,14 @@ Claude Code, one line:
 claude mcp add xoomar -- npx -y xoomar-mcp
 ```
 
-Optional environment: `XOOMAR_API_KEY` (a free account key from https://xoomar.com/signup raises the limit from 30 to 120 requests a minute), `XOOMAR_MAX_ROWS` (rows per tool result, default 200).
+As a library (the hosted endpoint is built this way):
+
+```ts
+import { buildServer } from "xoomar-mcp";
+const server = buildServer({ apiKey: "xm_live_...", maxRows: 100 }); // an McpServer with the 25 tools; connect any transport
+```
+
+Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key from https://xoomar.com/signup raises the limit from 30 to 120 requests a minute), `XOOMAR_MAX_ROWS` (rows per tool result, default 200).
 
 ## Tools
 
@@ -59,7 +68,7 @@ Every result carries `updatedAt`, `source` and the attribution line. Ask things 
 
 ## Where it is listed
 
-Official MCP registry as `com.xoomar/xoomar-mcp` (`server.json` in this repository is what gets published), npm as `xoomar-mcp`, and on Glama. The `mcpName` field in `package.json` is the registry's proof that the npm package and the registry entry belong together.
+Official MCP registry as `com.xoomar/xoomar-mcp` (`server.json` in this repository is what gets published: the npm package and the hosted `https://xoomar.com/mcp` remote), npm as `xoomar-mcp`, and on Glama. The `mcpName` field in `package.json` is the registry's proof that the npm package and the registry entry belong together.
 
 ## Data terms
 

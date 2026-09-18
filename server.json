@@ -3,7 +3,7 @@
   "name": "com.xoomar/xoomar-mcp",
   "title": "XOOMAR market data",
   "description": "Free US market data as tools: SEC filings, insiders, short interest, 13F, COT, ETF flows, liquidity.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "websiteUrl": "https://xoomar.com/markets/api",
   "repository": {
     "url": "https://github.com/xoomar-dev-cloud/xoomar-mcp",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "xoomar-mcp",
-      "version": "0.1.5",
+      "version": "0.1.6",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
@@ -37,6 +37,12 @@
           "default": "200"
         }
       ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://xoomar.com/mcp"
     }
   ]
 }
