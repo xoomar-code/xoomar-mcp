@@ -4,7 +4,7 @@ An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMA
 
 ## Use it
 
-**Hosted, nothing to install:** `https://xoomar.com/mcp` (Streamable HTTP). Add it as a remote MCP server or custom connector in Claude.ai, Claude Code (`claude mcp add --transport http xoomar https://xoomar.com/mcp`), ChatGPT, Cursor or any client that connects by URL. Send `Authorization: Bearer <key>` or `X-API-Key` with a free account key for 120 requests a minute; without one the limit is 30 a minute per IP.
+**Hosted, nothing to install:** `https://xoomar.com/mcp` (Streamable HTTP). Add it as a remote MCP server or custom connector in Claude.ai, Claude Code (`claude mcp add --transport http xoomar https://xoomar.com/mcp`), ChatGPT, Cursor or any client that connects by URL. Send `Authorization: Bearer <key>` or `X-API-Key` with a free account key for 30 requests a minute; without one the limit is 10 a minute per IP. Keyless and free-key requests return up to six months of history.
 
 **Local, over stdio:** Claude Desktop (`claude_desktop_config.json`), Claude Code, Cursor, Windsurf and any other MCP client that launches stdio servers:
 
@@ -32,7 +32,7 @@ import { buildServer } from "xoomar-mcp";
 const server = buildServer({ apiKey: "xm_live_...", maxRows: 100 }); // an McpServer with the 26 tools; connect any transport
 ```
 
-Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key from https://xoomar.com/signup raises the limit from 30 to 120 requests a minute), `XOOMAR_MAX_ROWS` (rows per tool result, default 200).
+Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key from https://xoomar.com/signup raises the limit from 10 to 30 requests a minute; keyless and free-key requests return up to six months of history), `XOOMAR_MAX_ROWS` (rows per tool result, default 200).
 
 ## Tools
 
@@ -54,7 +54,7 @@ Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key fro
 | `cot_positioning` | CFTC Commitments of Traders, latest or one market's history |
 | `funding_rates` | Perpetual funding on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX |
 | `fed_liquidity` | Net liquidity and its components, or one FRED series |
-| `policy_rates` | Central bank policy rates, 49 economies |
+| `policy_rates` | Central bank policy rates, 38 economies with a current series |
 | `macro_series` | US yield curve, spreads, stablecoin supply |
 | `treasury_auctions` | Treasury auction results and calendar since 2010 |
 | `economic_calendar` | 22 US release types from the agencies' schedules, with actuals after release |
@@ -69,7 +69,7 @@ Every result carries `updatedAt`, `source` and the attribution line. Ask things 
 
 ## Where it is listed
 
-Official MCP registry as `com.xoomar/xoomar-mcp` (`server.json` in this repository is what gets published: the npm package and the hosted `https://xoomar.com/mcp` remote), npm as `xoomar-mcp`, and on Glama. The `mcpName` field in `package.json` is the registry's proof that the npm package and the registry entry belong together.
+Listed in the official MCP registry as `com.xoomar/xoomar-mcp` and on npm as `xoomar-mcp`.
 
 ## Data terms
 

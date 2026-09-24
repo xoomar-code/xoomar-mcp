@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.xoomar/xoomar-mcp",
   "title": "XOOMAR market data",
-  "description": "Free US market data as tools: SEC filings, insiders, short interest, 13F, COT, ETF flows, liquidity.",
-  "version": "0.1.9",
+  "description": "Free US market data as tools: SEC filings, insiders, short interest, 13F, COT, Fed liquidity, crypto derivatives.",
+  "version": "0.1.10",
   "websiteUrl": "https://xoomar.com/markets/api",
   "repository": {
     "url": "https://github.com/xoomar-code/xoomar-mcp",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "xoomar-mcp",
-      "version": "0.1.9",
+      "version": "0.1.10",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
@@ -23,7 +23,7 @@
       "environmentVariables": [
         {
           "name": "XOOMAR_API_KEY",
-          "description": "Optional free account key from https://xoomar.com/signup: 120 requests a minute instead of 30.",
+          "description": "Optional free account key from https://xoomar.com/signup: 30 requests a minute instead of 10.",
           "isRequired": false,
           "isSecret": true,
           "format": "string"

@@ -2,7 +2,7 @@
 /**
  * MCP server for the XOOMAR free market data API (https://xoomar.com/markets/api), over stdio.
  *
- * No key is needed (30 requests a minute per IP); set XOOMAR_API_KEY for 120 a minute
+ * No key is needed (10 requests a minute per IP); set XOOMAR_API_KEY for 30 a minute
  * with a free account key from https://xoomar.com/signup. XOOMAR_MAX_ROWS caps rows per
  * result (default 200). The same server is hosted at https://xoomar.com/mcp.
  */

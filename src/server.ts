@@ -9,12 +9,12 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-export const VERSION = "0.1.9";
+export const VERSION = "0.1.10";
 
 export interface ServerOptions {
   /** API origin; the hosted endpoint points this at its own loopback address. */
   baseUrl?: string;
-  /** Free account key (X-API-Key): 120 requests a minute instead of 30. */
+  /** Free account key (X-API-Key): 30 requests a minute instead of 10. */
   apiKey?: string;
   /** Rows per tool result before the list is cut with a note (default 200). */
   maxRows?: number;
@@ -36,7 +36,7 @@ export function makeApiCall(options: ServerOptions): ApiCall {
   const headers: Record<string, string> = { ...(options.headers ?? {}), Accept: "application/json", "User-Agent": `xoomar-mcp/${VERSION}${options.via ? ` ${options.via}` : ""}` };
   if (options.apiKey) headers["x-api-key"] = options.apiKey;
   const res = await fetch(u, { headers, signal: AbortSignal.timeout(30_000) });
-  if (res.status === 429) throw new Error(`XOOMAR rate limit reached (${res.headers.get("retry-after") ?? "?"}s). 30 requests a minute without a key, 120 with a free key: set XOOMAR_API_KEY.`);
+  if (res.status === 429) throw new Error(`XOOMAR rate limit reached (${res.headers.get("retry-after") ?? "?"}s). 10 requests a minute without a key, 30 with a free key: set XOOMAR_API_KEY.`);
   if (!res.ok) throw new Error(`XOOMAR API ${res.status} for ${u.pathname}${u.search}: ${(await res.text()).slice(0, 200)}`);
   const payload = (await res.json()) as Record<string, unknown>;
   const { data, ...meta } = payload;
@@ -92,8 +92,8 @@ export function buildServer(options: ServerOptions = {}): McpServer {
 
   server.registerTool("insider_trades", {
     title: "SEC Form 4 insider trades",
-    description: "Insider transactions from SEC Form 4: insider name and title, transaction code, shares, price, value, date. History for a ticker from filings since 2020 (from, to and limit select the window, up to 2,000 rows) or the latest trades across companies (type P for open-market purchases, S for sales).",
-    inputSchema: { ticker: symbolArg.optional(), type: z.enum(["P", "S"]).optional().describe("P purchases, S sales (latest view only)"), window: z.enum(["7d", "30d", "90d"]).optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), to: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), limit: z.number().int().min(1).max(2000).optional().describe("Newest rows in the window (ticker history only, default 200)") },
+    description: "Insider transactions from SEC Form 4: insider name and title, transaction code, shares, price, value, date. History for a ticker (from, to and limit select the window, up to 2,000 rows) or the latest trades across companies (type buys for open-market purchases, sells for sales).",
+    inputSchema: { ticker: symbolArg.optional(), type: z.enum(["buys", "sells"]).optional().describe("buys: open-market purchases, sells: sales (latest view only)"), window: z.enum(["7d", "30d", "90d"]).optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), to: z.string().max(10).optional().describe("YYYY-MM-DD (ticker history only)"), limit: z.number().int().min(1).max(2000).optional().describe("Newest rows in the window (ticker history only, default 200)") },
   }, async ({ ticker, type, window, from, to, limit }) => text(ticker ? await callApi(`insiders/${ticker.toLowerCase()}`, { from, to, limit }) : await callApi("insiders", { type, window }), { limit: 100 }));
 
   server.registerTool("insider_clusters", {
@@ -105,7 +105,7 @@ export function buildServer(options: ServerOptions = {}): McpServer {
   server.registerTool("threshold_list", {
     title: "Regulation SHO threshold securities",
     description: "Reg SHO threshold lists from the Nasdaq and Cboe daily files since 2022: securities whose fails to deliver stayed above the threshold for five settlement days. One date (default the newest), one symbol's days on the list, or one listing market.",
-    inputSchema: { date: z.string().max(10).optional().describe("YYYY-MM-DD"), symbol: symbolArg.optional(), market: z.enum(["nasdaq", "cboe", "nyse"]).optional(), limit: z.number().int().min(1).max(5000).optional() },
+    inputSchema: { date: z.string().max(10).optional().describe("YYYY-MM-DD"), symbol: symbolArg.optional(), market: z.enum(["nasdaq", "cboe"]).optional(), limit: z.number().int().min(1).max(5000).optional() },
   }, async ({ date, symbol, market, limit }) => text(await callApi("threshold-list", { date, symbol, market, limit }), { limit: limit ?? 200 }));
 
   server.registerTool("planned_insider_sales", {
@@ -141,18 +141,18 @@ export function buildServer(options: ServerOptions = {}): McpServer {
   server.registerTool("corporate_events", {
     title: "SEC 8-K material events",
     description: "8-K current reports with their item numbers (2.02 earnings, 5.02 officer changes, 1.01 agreements and so on), for a ticker or the latest across companies.",
-    inputSchema: { ticker: symbolArg.optional(), item: z.string().max(8).optional().describe("8-K item number, e.g. 2.02"), days: z.number().int().min(1).max(365).optional() },
+    inputSchema: { ticker: symbolArg.optional(), item: z.string().max(8).optional().describe("8-K item number, e.g. 2.02"), days: z.number().int().min(1).max(90).optional().describe("Window in days (default 30, max 90)") },
   }, async ({ ticker, item, days }) => text(await callApi("events", { ticker, item, days }), { limit: 100 }));
 
   server.registerTool("earnings_calendar", {
     title: "Earnings calendar (8-K Item 2.02)",
-    description: "When US companies report results, from their own 8-K filings. With a ticker: every reported date since 2023 and the next expected date (an estimate: last year's date plus 52 weeks, with the basis). Without: the calendar window (default today to 14 days ahead; from and to open any window up to 120 days; status reported or estimated). Dates only, no EPS or consensus.",
+    description: "When US companies report results, from their own 8-K filings. With a ticker: every reported date since 2023 and the next expected date (an estimate until the company confirms it). Without: the calendar window (default today to 14 days ahead; from and to open any window up to 120 days; status reported or estimated). Dates only, no EPS or consensus.",
     inputSchema: { ticker: symbolArg.optional(), from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), status: z.enum(["reported", "estimated"]).optional(), limit: z.number().int().min(1).max(2000).optional() },
   }, async ({ ticker, from, to, status, limit }) => text(ticker && !from && !to && !status ? await callApi(`earnings/${ticker.toLowerCase()}`) : await callApi("earnings", { ticker, from, to, status, limit }), { limit: limit ?? 200 }));
 
   server.registerTool("cot_positioning", {
     title: "CFTC Commitments of Traders",
-    description: "Weekly CFTC positioning: the latest report across all tracked markets, or one market's history (e.g. gold, crude-oil, sp500, bitcoin, euro-fx, 10-year-note): open interest and long/short by trader category.",
+    description: "Weekly CFTC positioning: the latest report across all tracked markets, or one market's history by slug (e.g. gold, bitcoin, euro-fx, e-mini-s-p-500-stock-index, 10-year-u-s-treasury-notes-chicago-board-of-trade; the latest report lists every slug): open interest and long/short by trader category.",
     inputSchema: { market: z.string().max(40).optional().describe("Market slug, e.g. gold; omit for the latest report across markets"), limit: z.number().int().min(1).max(500).optional() },
   }, async ({ market, limit }) => text(market ? await callApi(`cot/${market}`) : await callApi("cot"), { limit: limit ?? 52 }));
 
@@ -170,7 +170,7 @@ export function buildServer(options: ServerOptions = {}): McpServer {
 
   server.registerTool("policy_rates", {
     title: "Central bank policy rates",
-    description: "Policy rates for 49 economies: the current table, or one country code's history (e.g. us, eu, jp, gb).",
+    description: "Central bank policy rates for 38 economies with a current series: the current table, or one country code's history (e.g. us, xm for the euro area, jp, gb).",
     inputSchema: { country: z.string().max(4).optional() },
   }, async ({ country }) => text(country ? await callApi(`rates/${country.toLowerCase()}`) : await callApi("rates"), { limit: 120 }));
 
@@ -189,7 +189,7 @@ export function buildServer(options: ServerOptions = {}): McpServer {
   server.registerTool("economic_calendar", {
     title: "US economic calendar",
     description: "Scheduled US releases from the agencies' own calendars (CPI, PPI, payrolls, weekly jobless claims, PCE, GDP, retail sales, housing, durable goods, industrial production, trade, FOMC decisions and minutes, Beige Book), with the actual and previous print filled after release and a unit field. No consensus figures. Default window: last 7 days to next 30.",
-    inputSchema: { from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), importance: z.enum(["high", "med", "medium", "low"]).optional() },
+    inputSchema: { from: z.string().max(10).optional().describe("YYYY-MM-DD"), to: z.string().max(10).optional().describe("YYYY-MM-DD"), importance: z.enum(["high", "medium", "low"]).optional() },
   }, async ({ from, to, importance }) => text(await callApi("calendar", { from, to, importance: importance === "medium" ? "med" : importance })));
 
   server.registerTool("private_placements", {
@@ -231,8 +231,8 @@ export function buildServer(options: ServerOptions = {}): McpServer {
     inputSchema: {},
   }, async () => ({ content: [{ type: "text" as const, text: [
     "XOOMAR free market data API. Base URL https://xoomar.com/api/markets/<dataset>. JSON envelope {data, updatedAt, source, docs, license, attribution}; CSV at /api/markets/<dataset>/csv.",
-    "Limits: 30 requests a minute per IP without a key; 120 with a free account key (X-API-Key header, https://xoomar.com/signup); 429 carries Retry-After.",
-    "Datasets: short-interest, short-volume, fails-to-deliver, insiders, planned-sales, large-holders, funds, financials, buybacks, events, structured-products, federal-contracts, startup-funding, ipos, bitcoin-treasuries, cot, funding-rates, open-interest, liquidations, options, whales, sentiment, signals, etf-flows, earnings, macro, fed-liquidity, rates, calendar.",
+    "Limits: 10 requests a minute per IP without a key, 30 with a free account key (X-API-Key header, https://xoomar.com/signup); keyless and free-key requests return up to six months of history; 429 carries Retry-After.",
+    "Datasets: short-interest, short-volume, fails-to-deliver, insiders, planned-sales, large-holders, funds, financials, buybacks, events, structured-products, federal-contracts, startup-funding, ipos, bitcoin-treasuries, cot, funding-rates, open-interest, liquidations, options, whales, sentiment, signals, etf-flows, earnings, macro, fed-liquidity, rates, calendar, threshold-list, treasury-auctions, insiders/clusters.",
     "Full reference with every parameter and field: https://xoomar.com/markets/api. Filing types explained: https://xoomar.com/markets/sec-filings.",
     "Attribution: when the data is republished (site, app, article, chart, dataset), credit XOOMAR with a visible link to the dataset page on xoomar.com. Terms of use: https://xoomar.com/terms.",
   ].join("\n") }] }));
