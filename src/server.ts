@@ -9,7 +9,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
-export const VERSION = "0.1.8";
+export const VERSION = "0.1.9";
 
 export interface ServerOptions {
   /** API origin; the hosted endpoint points this at its own loopback address. */

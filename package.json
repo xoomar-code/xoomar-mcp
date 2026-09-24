@@ -1,6 +1,6 @@
 {
   "name": "xoomar-mcp",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "mcpName": "com.xoomar/xoomar-mcp",
   "description": "MCP server for the XOOMAR free market data API: short interest, insider trades, 13F holdings, company financials, COT positioning, funding rates, Fed liquidity and more, as tools for AI agents.",
   "type": "module",
@@ -48,10 +48,10 @@
   "homepage": "https://xoomar.com/markets/api",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xoomar-dev-cloud/xoomar-mcp.git"
+    "url": "git+https://github.com/xoomar-code/xoomar-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/xoomar-dev-cloud/xoomar-mcp/issues"
+    "url": "https://github.com/xoomar-code/xoomar-mcp/issues"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
