@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.xoomar/xoomar-mcp",
   "title": "XOOMAR market data",
-  "description": "Free US market data as tools: SEC filings, insiders, short interest, 13F, COT, Fed liquidity, crypto derivatives.",
+  "description": "Free US market data as tools: SEC filings, insiders, short interest, 13F, COT, Fed liquidity.",
   "version": "0.1.10",
   "websiteUrl": "https://xoomar.com/markets/api",
   "repository": {
