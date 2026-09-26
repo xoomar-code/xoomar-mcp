@@ -1,5 +1,7 @@
 # xoomar-mcp
 
+[![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/xoomar-code/xoomar-mcp)
+
 An [MCP](https://modelcontextprotocol.io) server that gives AI agents the [XOOMAR](https://xoomar.com/markets) free market data API as tools: 26 tools over 31 datasets built from primary sources (SEC EDGAR and XBRL, FINRA, CFTC, the Federal Reserve, USAspending, exchange APIs). No key needed to start.
 
 ## Use it
@@ -52,7 +54,7 @@ Optional environment for the stdio bin: `XOOMAR_API_KEY` (a free account key fro
 | `earnings_calendar` | Reported earnings dates from 8-K Item 2.02 filings and the next expected date per company (estimated, with its basis) |
 | `corporate_events` | 8-K material events by item |
 | `cot_positioning` | CFTC Commitments of Traders, latest or one market's history |
-| `funding_rates` | Perpetual funding on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX |
+| `funding_rates` | Perpetual funding on Binance, Bybit, OKX, Hyperliquid and Kraken (BitMEX history to 16 Sep 2026, when it closed its swaps) |
 | `fed_liquidity` | Net liquidity and its components, or one FRED series |
 | `policy_rates` | Central bank policy rates, 38 economies with a current series |
 | `macro_series` | US yield curve, spreads, stablecoin supply |
@@ -69,7 +71,7 @@ Every result carries `updatedAt`, `source` and the attribution line. Ask things 
 
 ## Where it is listed
 
-Listed in the official MCP registry as `com.xoomar/xoomar-mcp` and on npm as `xoomar-mcp`.
+Listed in the official MCP registry as `com.xoomar/xoomar-mcp`, on npm as `xoomar-mcp`, and on [mcpservers.org](https://mcpservers.org/servers/xoomar-code/xoomar-mcp).
 
 ## Data terms
 

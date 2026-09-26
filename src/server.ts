@@ -158,7 +158,7 @@ export function buildServer(options: ServerOptions = {}): McpServer {
 
   server.registerTool("funding_rates", {
     title: "Perpetual futures funding rates",
-    description: "Current perpetual funding rates on Binance, Bybit, OKX, Hyperliquid, Kraken and BitMEX for tracked crypto symbols (hourly venues shown as the 8-hour equivalent), or one symbol's history by slug (e.g. btc, eth, sol).",
+    description: "Current perpetual funding rates on Binance, Bybit, OKX, Hyperliquid and Kraken for tracked crypto symbols (hourly venues shown as the 8-hour equivalent), or one symbol's history by slug (e.g. btc, eth, sol).",
     inputSchema: { slug: z.string().max(20).optional() },
   }, async ({ slug }) => text(slug ? await callApi(`funding-rates/${slug}`) : await callApi("funding-rates"), { limit: 200 }));
 
